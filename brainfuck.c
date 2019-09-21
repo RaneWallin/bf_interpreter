@@ -20,6 +20,10 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301, USA.
  * 
+ * Resources:
+ * 
+ * Array size in C
+ * https://stackoverflow.com/questions/37538/how-do-i-determine-the-size-of-my-array-in-c
  * 
  */
 
@@ -28,10 +32,6 @@
 #include <strings.h>
 
 // function prototypes
-void addData(int data, int *Data);
-void addCode(char code, char *Code);
-void growCharArray(char *arr);
-void growIntArray(int *arr);
 int  isValidCode(char code);
 
 // constants
@@ -40,40 +40,22 @@ const char VALID_CODE[8] = {';', ':', '<', '>', '[', ']', '+', '-'};
 
 int main(int argc, char **argv)
 {
-	int Data[100], i;
+	int Data[100], 
+		i, 
+		chSize = argc - 1;
+		
 	char Code[100];
 	
 	if(argc == 1) {
 		 printf("No commands\n");
 		 return -1;
 	 }
-	
-	for(i = 1; i < argc; i++) {
-		printf("%s is %s valid\n", 	argv[i],
-									isValidCode(*argv[i]) ? "" : "not");
-	}
+	 
+	 for(i = 0; i < chSize; i++) {
+		 Code[i] = *argv[i + 1];
+	 }
 	
 	return 0;
-}
-
-// Add integer to Data
-void addData(int data, int *Data) {
-	
-}
-
-// Add char to Code
-void addCode(char code, char *Code) {
-	
-}
-
-// increase the length of a char array
-void growCharArray(char *arr) {
-	
-}
-
-// increase the length of an int array
-void growIntArray(int *arr) {
-	
 }
 
 // verify code char is a valid command
