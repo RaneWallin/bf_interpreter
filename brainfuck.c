@@ -24,9 +24,42 @@
 
 #include <stdio.h>
 
+// function prototypes
+void addData(int data, int *Data);
+void addCode(char code, char *Code);
+void growArray(char *arr);
+void growArray(int *arr);
+int  isValidCode(char code);
+
 int main(int argc, char **argv)
 {
+	int Data[100);
+	char Code[100];
 	
 	return 0;
 }
 
+// Add integer to Data
+void addData(int data, int *Data) {
+	
+}
+
+// Add char to Code
+void addCode(int code, int *Code) {
+	
+}
+
+// increase the length of a char array
+void growArray(char *arr) {
+	
+}
+
+// increase the length of an int array
+void growArray(int *arr) {
+	
+}
+
+// verify code char is a valid command
+void isValidCode(char code) {
+	
+}
