@@ -1,7 +1,9 @@
 /*
- * brainfuck.c
+ * brainfuck.c - Rane Wallin
  * 
- * Copyright 2019  <pi@raspberrypi>
+ * A brainfuck interpreter that processes code written in brainfuck
+ * 
+ * Copyright 2019  <SheCodes@pm.me>
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,18 +25,33 @@
 
 
 #include <stdio.h>
+#include <strings.h>
 
 // function prototypes
 void addData(int data, int *Data);
 void addCode(char code, char *Code);
-void growArray(char *arr);
-void growArray(int *arr);
+void growCharArray(char *arr);
+void growIntArray(int *arr);
 int  isValidCode(char code);
+
+// constants
+const int COMMANDS = 8;
+const char VALID_CODE[8] = {';', ':', '<', '>', '[', ']', '+', '-'};
 
 int main(int argc, char **argv)
 {
-	int Data[100);
+	int Data[100], i;
 	char Code[100];
+	
+	if(argc == 1) {
+		 printf("No commands\n");
+		 return -1;
+	 }
+	
+	for(i = 1; i < argc; i++) {
+		printf("%s is %s valid\n", 	argv[i],
+									isValidCode(*argv[i]) ? "" : "not");
+	}
 	
 	return 0;
 }
@@ -45,21 +62,31 @@ void addData(int data, int *Data) {
 }
 
 // Add char to Code
-void addCode(int code, int *Code) {
+void addCode(char code, char *Code) {
 	
 }
 
 // increase the length of a char array
-void growArray(char *arr) {
+void growCharArray(char *arr) {
 	
 }
 
 // increase the length of an int array
-void growArray(int *arr) {
+void growIntArray(int *arr) {
 	
 }
 
 // verify code char is a valid command
-void isValidCode(char code) {
+int isValidCode(char code) {
+	int isValid = 0,
+		count = 0;
 	
+	while(!isValid && count < COMMANDS) {
+		if (code == VALID_CODE[count])
+			isValid = 1;
+		
+		count++;
+	}
+	
+	return isValid;
 }
