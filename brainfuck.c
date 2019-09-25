@@ -20,40 +20,67 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301, USA.
  * 
- * Resources:
- * 
- * Array size in C
- * https://stackoverflow.com/questions/37538/how-do-i-determine-the-size-of-my-array-in-c
  * 
  */
 
 
 #include <stdio.h>
-#include <strings.h>
+#include <string.h>
 
 // function prototypes
 int  isValidCode(char code);
 
 // constants
-const int COMMANDS = 8;
-const char VALID_CODE[8] = {';', ':', '<', '>', '[', ']', '+', '-'};
+const int 	COMMANDS 		= 8;
+const char 	VALID_CODE[] 	= {';', ':', '<', '>', '[', ']', '+', '-'};
+
+// Errors
+const char *NO_FILE_MSG 	= "No such file exists!";
+const char	bEOF			= 255;
+const int 	NO_FILE_ERROR 	= -2;
+
+
+// File handling
+const int 	FILENAME      	= 1;
+const char	*READONLY		= "r";
 
 int main(int argc, char **argv)
 {
-	int Data[100], 
-		i, 
-		chSize = argc - 1;
+	int Data[100],
+		count = 0,
+		tData = 0,
+		tCode = 0,
+		i;
 		
-	char Code[100];
+	char Code[100],
+		 c;
+		 
+	FILE *fileBF; 
 	
 	if(argc == 1) {
-		 printf("No commands\n");
-		 return -1;
-	 }
+		printf("No commands\n");
+		return -1;
+	}
+	
+		// File doesn't exist
+	if((fileBF = fopen(argv[FILENAME], READONLY)) == NULL) {
+		printf("%s\n", NO_FILE_MSG);
+		return NO_FILE_ERROR;
+	}
+	
+	c = fgetc(fileBF);
 	 
-	 for(i = 0; i < chSize; i++) {
-		 Code[i] = *argv[i + 1];
-	 }
+	while(c != bEOF) {
+		if(isValidCode(c)) {
+			Code[count] = c;
+			count++;
+		}
+		c = fgetc(fileBF);
+	}
+	 
+	Code[count + 1] = '\0';
+	 
+	printf("%s\n", Code);
 	
 	return 0;
 }
