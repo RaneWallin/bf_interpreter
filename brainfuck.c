@@ -30,6 +30,7 @@
 // function prototypes
 int  isValidCode(char code);
 void addCode(FILE *file, char *code, int *count);
+void fuckItUp(char code, int *data, int *p);
 
 // constants
 const int 	COMMANDS 		= 8;
@@ -49,7 +50,7 @@ int main(int argc, char **argv)
 {
 	int Data[100],
 		count = 0,
-		tData = 0,
+		dPtr = 0,
 		tCode = 0,
 		i;
 		
@@ -73,12 +74,40 @@ int main(int argc, char **argv)
 	// Get each character from the file, validate it, and put it
 	// into the Code array
 	addCode(fileBF, Code, &count);
-
-	Code[count + 1] = '\0';
-	 
-	printf("%s\n", Code);
+	
+	for(i = 0; i < count; i++) {
+		fuckItUp(Code[i], Data, &dPtr);
+	}
 	
 	return 0;
+}
+
+void fuckItUp(char code, int *data, int *p) {
+	switch(code) {
+		case ';':
+			printf("? ");
+			printf("ptr is %d and data is %d\n", *p, data[*p]);
+			scanf("%d", &data[*p]);
+			printf("ptr is %d and data is %d\n", *p, data[*p]);
+			break;
+		case ':':
+			printf("%d\n", data[*p]);
+			break;
+		case '<':
+			break;
+		case '>':
+			break;
+		case '[':
+			break;
+		case ']':
+			break;
+		case '+':
+			break;
+		case '-':
+			break;
+		default:
+			printf("You are seeing this something went extra wrong.\n");
+	}
 }
 
 // Add characters to Code array
@@ -90,12 +119,11 @@ void addCode(FILE *file, char *code, int *count) {
 	while(c != bEOF) {
 		if(isValidCode(c)) {
 			code[*count] = c;
-			*count = *count + 1;
+			(*count)++;
 		}
 		
 		c = fgetc(file);
 	}
-	
 }
 
 // Check if code char is a valid command
