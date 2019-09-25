@@ -28,9 +28,9 @@
 #include <string.h>
 
 // function prototypes
-int  isValidCode(char code);
-void addCode(FILE *file, char *code, int *count);
-void fuckItUp(char code, int *data, int *p);
+int  		isValidCode(char code);
+void 		addCode(FILE *file, char *code, int *count);
+void 		fuckItUp(char code, int *data, int *p);
 
 // constants
 const int 	COMMANDS 		= 8;
@@ -86,16 +86,19 @@ void fuckItUp(char code, int *data, int *p) {
 	switch(code) {
 		case ';':
 			printf("? ");
-			printf("ptr is %d and data is %d\n", *p, data[*p]);
 			scanf("%d", &data[*p]);
-			printf("ptr is %d and data is %d\n", *p, data[*p]);
 			break;
 		case ':':
 			printf("%d\n", data[*p]);
 			break;
 		case '<':
+			if (*p - 1 < 0)
+				printf("Point out of bounds, quitting.\n");
+			else 
+				(*p)--;
 			break;
 		case '>':
+			(*p)++;
 			break;
 		case '[':
 			break;
