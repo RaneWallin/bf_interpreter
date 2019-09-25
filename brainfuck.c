@@ -29,6 +29,7 @@
 
 // function prototypes
 int  isValidCode(char code);
+void addCode(FILE *file, char *code, int *count);
 
 // constants
 const int 	COMMANDS 		= 8;
@@ -62,22 +63,17 @@ int main(int argc, char **argv)
 		return -1;
 	}
 	
-		// File doesn't exist
+	// Verify and open file
 	if((fileBF = fopen(argv[FILENAME], READONLY)) == NULL) {
+		// File doesn't exist
 		printf("%s\n", NO_FILE_MSG);
 		return NO_FILE_ERROR;
 	}
-	
-	c = fgetc(fileBF);
-	 
-	while(c != bEOF) {
-		if(isValidCode(c)) {
-			Code[count] = c;
-			count++;
-		}
-		c = fgetc(fileBF);
-	}
-	 
+
+	// Get each character from the file, validate it, and put it
+	// into the Code array
+	addCode(fileBF, Code, &count);
+
 	Code[count + 1] = '\0';
 	 
 	printf("%s\n", Code);
@@ -85,7 +81,24 @@ int main(int argc, char **argv)
 	return 0;
 }
 
-// verify code char is a valid command
+// Add characters to Code array
+void addCode(FILE *file, char *code, int *count) {
+	char c;
+
+	c = fgetc(file);
+	
+	while(c != bEOF) {
+		if(isValidCode(c)) {
+			code[*count] = c;
+			*count = *count + 1;
+		}
+		
+		c = fgetc(file);
+	}
+	
+}
+
+// Check if code char is a valid command
 int isValidCode(char code) {
 	int isValid = 0,
 		count = 0;
