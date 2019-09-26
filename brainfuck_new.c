@@ -31,7 +31,7 @@
 // function prototypes
 int  		isValidCode(char code);
 void 		addCode(FILE *file, char *code, int *count);
-void 		fuckItUp(char code, char *Code, int *Data, int *dPtr, int *cPtr);
+void 		fuckItUp(char code, int *dPtr, char *cPtr);
 
 // constants
 const int 	COMMANDS 		= 8;
@@ -51,11 +51,11 @@ int main(int argc, char **argv)
 {
 	int Data[100],
 		count = 0,
-		dPtr = 0,
-		cPtr = 0,
+		*dPtr = Data,
 		i;
 		
 	char Code[100],
+		 *cPtr = Code,
 		 c;
 		 
 	FILE *fileBF; 
@@ -76,11 +76,8 @@ int main(int argc, char **argv)
 	// into the Code array
 	addCode(fileBF, Code, &count);
 	Code[count + 1] = '\0';
-	
-	while(Code[cPtr] != '\0') {
-		fuckItUp(Code[cPtr], Code, Data, &dPtr, &cPtr);
-		cPtr++;
-	}
+
+	fuckItUp(*cPtr, dPtr, cPtr);
 	
 	printf("\n");
 	
@@ -88,64 +85,67 @@ int main(int argc, char **argv)
 }
 
 // Perform current command `code`
-void fuckItUp(char code, char *Code, int *Data, int *dPtr, int *cPtr) {
-	// int i, j;
+void fuckItUp(char code, int *dPtr, char *cPtr) {
 
-	//for(i = 0; i < 10000; i++)
-	//	for(j = 0; j < 10000; j++);
 		
 	switch(code) {
 		case ';':
 			printf("? ");
-			scanf("%d", &Data[*dPtr]);
+			scanf("%d", &*dPtr);
 			break;
 		case ':':
-			printf("%d", Data[*dPtr]);
+			printf("%d", *dPtr);
 			break;
 		case '<':
-			if (*dPtr - 1 < 0)
+			if (dPtr - 1 < 0)
 				printf("Point out of bounds, quitting.\n");
 			else { 
-				(*dPtr)--;
+				dPtr--;
 			}
 			break;
 		case '>':
-			(*dPtr)++;
+			dPtr++;
 			break;
 		case '[':
-			if(Data[*dPtr] == 0) {
-				while(Code[*cPtr] != ']') {
-					if (Code[*cPtr] == '\0') {
+			if(*dPtr == 0) {
+				while(*cPtr != ']') {
+					if (*cPtr == '\0') {
 						printf("[ Loop conditions out of bound.\n");
 						return;
 					}
-					(*cPtr)++;
+					cPtr++;
 				} 
-				(*cPtr)++;
+				cPtr++;
 			}
 				
 			break;
 		case ']':
-			while(Code[*cPtr] != '[') {
-				if (*cPtr < 0) {
+			while(*cPtr != '[') {
+				if (cPtr < 0) {
 					printf("] Loop conditions out of bound.\n");
 					return;
 				}
 			
-				(*cPtr)--;	
+				cPtr--;	
 			} 
 			
-			(*cPtr)--;
+			cPtr--;
 			break;
 		case '+':
-			(Data[*dPtr])++;
+			(*dPtr)++;
 			break;
 		case '-':
-			(Data[*dPtr])--;
+			//printf("*dPtr is %d\n", *dPtr);
+			(*dPtr)--;
+			//printf("*dPtr is %d\n", *dPtr);
 			break;
 		default:
 			printf("If you are seeing this something went extra wrong.\n");
 	}
+	cPtr++;
+	
+	if(*cPtr != '\0') 
+		fuckItUp(*cPtr, dPtr, cPtr); 
 }
 
 // Add characters to Code array
