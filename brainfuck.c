@@ -26,11 +26,12 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 
 // function prototypes
 int  		isValidCode(char code);
 void 		addCode(FILE *file, char *code, int *count);
-void 		fuckItUp(char code, int *data, int *p);
+void 		fuckItUp(char code, char *Code, int *Data, int *dPtr, int *cPtr);
 
 // constants
 const int 	COMMANDS 		= 8;
@@ -51,7 +52,7 @@ int main(int argc, char **argv)
 	int Data[100],
 		count = 0,
 		dPtr = 0,
-		tCode = 0,
+		cPtr = 0,
 		i;
 		
 	char Code[100],
@@ -74,39 +75,72 @@ int main(int argc, char **argv)
 	// Get each character from the file, validate it, and put it
 	// into the Code array
 	addCode(fileBF, Code, &count);
+	Code[count + 1] = '\0';
 	
-	for(i = 0; i < count; i++) {
-		fuckItUp(Code[i], Data, &dPtr);
+	while(Code[cPtr] != '\0') {
+		fuckItUp(Code[cPtr], Code, Data, &dPtr, &cPtr);
+		cPtr++;
 	}
+	
+	printf("\n");
 	
 	return 0;
 }
 
-void fuckItUp(char code, int *data, int *p) {
+void fuckItUp(char code, char *Code, int *Data, int *dPtr, int *cPtr) {
+	int i, j;
+
+	//for(i = 0; i < 10000; i++)
+	//	for(j = 0; j < 10000; j++);
+		
 	switch(code) {
 		case ';':
 			printf("? ");
-			scanf("%d", &data[*p]);
+			scanf("%d", &Data[*dPtr]);
 			break;
 		case ':':
-			printf("%d\n", data[*p]);
+			printf("%d", Data[*dPtr]);
 			break;
 		case '<':
-			if (*p - 1 < 0)
+			if (*dPtr - 1 < 0)
 				printf("Point out of bounds, quitting.\n");
-			else 
-				(*p)--;
+			else { 
+				(*dPtr)--;
+			}
 			break;
 		case '>':
-			(*p)++;
+			(*dPtr)++;
 			break;
 		case '[':
+			if(Data[*dPtr] == 0) {
+				while(Code[*cPtr] != ']') {
+					if (Code[*cPtr] == '\0') {
+						printf("[ Loop conditions out of bound.\n");
+						return;
+					}
+					(*cPtr)++;
+				} 
+				(*cPtr)++;
+			}
+				
 			break;
 		case ']':
+			while(Code[*cPtr] != '[') {
+				if (*cPtr < 0) {
+					printf("] Loop conditions out of bound.\n");
+					return;
+				}
+			
+				(*cPtr)--;	
+			} 
+			
+			(*cPtr)--;
 			break;
 		case '+':
+			(Data[*dPtr])++;
 			break;
 		case '-':
+			(Data[*dPtr])--;
 			break;
 		default:
 			printf("You are seeing this something went extra wrong.\n");
