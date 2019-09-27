@@ -20,6 +20,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301, USA.
  * 
+ * Determine file size: https://stackoverflow.com/questions/238603/how-can-i-get-a-files-size-in-c
  * 
  */
 
@@ -30,8 +31,8 @@
 
 // function prototypes
 int  		isValidCode(char code);
-void 		addCode(FILE *file, char *code, int *count);
-void 		fuckItUp(char code, int *dPtr, char *cPtr);
+void 		addCode(FILE *file, char *code);
+void 		fuckItUp(char code, char *cPtr, int *dPtr);
 
 // constants
 const int 	COMMANDS 		= 8;
@@ -49,14 +50,13 @@ const char	*READONLY		= "r";
 
 int main(int argc, char **argv)
 {
-	int Data[100],
-		count = 0,
+	int Data[1000],
 		*dPtr = Data,
+		fsz,
 		i;
 		
-	char Code[100],
-		 *cPtr = Code,
-		 c;
+	char *Code,
+		 *cPtr;
 		 
 	FILE *fileBF; 
 	
@@ -71,13 +71,22 @@ int main(int argc, char **argv)
 		printf("%s\n", NO_FILE_MSG);
 		return NO_FILE_ERROR;
 	}
+	
+	// Determine file size and allocate memory for the Code
+	// array based on it
+	fseek(fileBF, 0L, SEEK_END);
+	fsz = ftell(fileBF);
+	rewind(fileBF);
+	Code = (char *) malloc((fsz + 1) * sizeof(char));
 
 	// Get each character from the file, validate it, and put it
 	// into the Code array
-	addCode(fileBF, Code, &count);
-	Code[count + 1] = '\0';
+	addCode(fileBF, Code);
+	
 
-	fuckItUp(*cPtr, dPtr, cPtr);
+	cPtr = Code;
+
+	fuckItUp(*cPtr, cPtr,dPtr);
 	
 	printf("\n");
 	
@@ -85,7 +94,8 @@ int main(int argc, char **argv)
 }
 
 // Perform current command `code`
-void fuckItUp(char code, int *dPtr, char *cPtr) {
+void fuckItUp(char code, char *cPtr, int *dPtr) {
+	//int *Data = (int *) malloc(10 * sizeof(int))
 
 		
 	switch(code) {
@@ -94,7 +104,7 @@ void fuckItUp(char code, int *dPtr, char *cPtr) {
 			scanf("%d", &*dPtr);
 			break;
 		case ':':
-			printf("%d", *dPtr);
+			printf("%d ", *dPtr);
 			break;
 		case '<':
 			if (dPtr - 1 < 0)
@@ -135,9 +145,7 @@ void fuckItUp(char code, int *dPtr, char *cPtr) {
 			(*dPtr)++;
 			break;
 		case '-':
-			//printf("*dPtr is %d\n", *dPtr);
 			(*dPtr)--;
-			//printf("*dPtr is %d\n", *dPtr);
 			break;
 		default:
 			printf("If you are seeing this something went extra wrong.\n");
@@ -145,23 +153,25 @@ void fuckItUp(char code, int *dPtr, char *cPtr) {
 	cPtr++;
 	
 	if(*cPtr != '\0') 
-		fuckItUp(*cPtr, dPtr, cPtr); 
+		fuckItUp(*cPtr, cPtr, dPtr); 
 }
 
 // Add characters to Code array
-void addCode(FILE *file, char *code, int *count) {
+void addCode(FILE *file, char *code) {
 	char c;
 
 	c = fgetc(file);
 	
 	while(c != bEOF) {
 		if(isValidCode(c)) {
-			code[*count] = c;
-			(*count)++;
+			*code = c;
+			code++;
 		}
 		
 		c = fgetc(file);
 	}
+
+	*code = '\0';
 }
 
 // Check if code char is a valid command
