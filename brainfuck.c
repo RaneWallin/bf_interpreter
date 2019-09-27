@@ -20,6 +20,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301, USA.
  * 
+ * Determine file size: https://stackoverflow.com/questions/238603/how-can-i-get-a-files-size-in-c
  * 
  */
 
@@ -30,8 +31,21 @@
 
 // function prototypes
 int  		isValidCode(char code);
-void 		addCode(FILE *file, char *code, int *count);
-void 		fuckItUp(char code, char *Code, int *Data, int *dPtr, int *cPtr);
+void 		addCode(FILE *file, char *code);
+void 		fuckItUp(char code, 
+					 char *cPtr, 
+					 int *dPtr, 
+					 int *Data, 
+					 char *Code, 
+					 char flag);
+					 
+// colors
+const char *BRIGHT_RED  	= "\033[31;1m";
+const char *DARK_CYAN    	= "\033[36m";
+const char *BRIGHT_CYAN  	= "\033[36;1m";
+const char *BRIGHT_WHITE 	= "\033[37;1m";
+const char *CLEAR_COLOR  	= "\033[0m";
+
 
 // constants
 const int 	COMMANDS 		= 8;
@@ -39,8 +53,12 @@ const char 	VALID_CODE[] 	= {';', ':', '<', '>', '[', ']', '+', '-'};
 
 // Errors
 const char  *NO_FILE_MSG 	= "No such file exists!";
+const char  *USAGE 			= "Usage: brain <filename>\n";
+const char 	*BAD_LOOP		= "Loop conditions out of bounds.\n";
+const char	*BAD_POINTER	= "Pointer out of bounds.\n";
 const char	bEOF			= 255;
 const int 	NO_FILE_ERROR 	= -2;
+const int 	USAGE_ERROR		= -1;
 
 
 // File handling
@@ -49,20 +67,19 @@ const char	*READONLY		= "r";
 
 int main(int argc, char **argv)
 {
-	int Data[100],
-		count = 0,
-		dPtr = 0,
-		cPtr = 0,
+	int *Data,
+		*dPtr,
+		fsz,
 		i;
 		
-	char Code[100],
-		 c;
+	char *Code,
+		 *cPtr;
 		 
 	FILE *fileBF; 
 	
 	if(argc == 1) {
-		printf("No commands\n");
-		return -1;
+		printf(USAGE);
+		return USAGE_ERROR;
 	}
 	
 	// Verify and open file
@@ -71,16 +88,29 @@ int main(int argc, char **argv)
 		printf("%s\n", NO_FILE_MSG);
 		return NO_FILE_ERROR;
 	}
+	
+	// Allocate data
+	Data = (int *) calloc(1000, sizeof(int));
+	
+	// Determine file size and allocate memory for the Code
+	// array based on it
+	fseek(fileBF, 0L, SEEK_END);
+	fsz = ftell(fileBF);
+	rewind(fileBF);
+	if(fsz < 10) fsz = 10;
+	Code = (char *) calloc((fsz + 1), sizeof(char));
 
 	// Get each character from the file, validate it, and put it
 	// into the Code array
-	addCode(fileBF, Code, &count);
-	Code[count + 1] = '\0';
+	addCode(fileBF, Code);
 	
-	while(Code[cPtr] != '\0') {
-		fuckItUp(Code[cPtr], Code, Data, &dPtr, &cPtr);
-		cPtr++;
-	}
+
+	// Set pointers
+	cPtr = Code;
+	dPtr = Data;
+	
+	
+	fuckItUp(*cPtr, cPtr, dPtr, Data, Code, 'v');
 	
 	printf("\n");
 	
@@ -88,80 +118,110 @@ int main(int argc, char **argv)
 }
 
 // Perform current command `code`
-void fuckItUp(char code, char *Code, int *Data, int *dPtr, int *cPtr) {
-	// int i, j;
-
-	//for(i = 0; i < 10000; i++)
-	//	for(j = 0; j < 10000; j++);
+void fuckItUp(char code, char *cPtr, int *dPtr, int *Data, char *Code, char flag) {
+	int i, j;
+	
+	
+	// Print Code and Data info in verbose mode
+	if(flag == 'v') {
+		// pause
+		for(i = 0; i < 10000; i++)
+			for(j = 0; j < 10000; j++);
+			
+		printf("Data: ");
+		for(i = 0; i < 10; i++) {
+			printf("%s%d ", (&Data[i] == dPtr) ? 
+								BRIGHT_CYAN : CLEAR_COLOR,
+							  Data[i]);
+		}
+		
+		printf("\n");
+		printf("Code: ");
+		for(i = 0; i < 10; i++) {
+			printf("%s%c%s ", &Code[i] == cPtr ? BRIGHT_CYAN : CLEAR_COLOR,
+						      Code[i], CLEAR_COLOR);
+		}
+		printf("\n");
+	}
 		
 	switch(code) {
 		case ';':
 			printf("? ");
-			scanf("%d", &Data[*dPtr]);
+			scanf("%d", &*dPtr);
 			break;
 		case ':':
-			printf("%d", Data[*dPtr]);
+			printf("%s%d%s ", (flag == 'v' ? BRIGHT_RED : CLEAR_COLOR), 
+					          *dPtr, 
+					          CLEAR_COLOR);
 			break;
 		case '<':
-			if (*dPtr - 1 < 0)
-				printf("Point out of bounds, quitting.\n");
+			if (dPtr - 1 < 0)
+				printf(BAD_POINTER);
 			else { 
-				(*dPtr)--;
+				dPtr--;
 			}
 			break;
 		case '>':
-			(*dPtr)++;
+			dPtr++;
 			break;
 		case '[':
-			if(Data[*dPtr] == 0) {
-				while(Code[*cPtr] != ']') {
-					if (Code[*cPtr] == '\0') {
-						printf("[ Loop conditions out of bound.\n");
+			if(*dPtr == 0) {
+				while(*cPtr != ']') {
+					if (*cPtr == '\0') {
+						printf("[ %s", BAD_LOOP);
 						return;
 					}
-					(*cPtr)++;
+					cPtr++;
 				} 
-				(*cPtr)++;
 			}
 				
 			break;
 		case ']':
-			while(Code[*cPtr] != '[') {
-				if (*cPtr < 0) {
-					printf("] Loop conditions out of bound.\n");
+			while(*cPtr != '[') {
+				if (cPtr < 0) {
+					printf("] %s", BAD_LOOP);
 					return;
 				}
 			
-				(*cPtr)--;	
+				cPtr--;	
 			} 
 			
-			(*cPtr)--;
+			cPtr--;
 			break;
 		case '+':
-			(Data[*dPtr])++;
+			(*dPtr)++;
 			break;
 		case '-':
-			(Data[*dPtr])--;
+			(*dPtr)--;
 			break;
 		default:
 			printf("If you are seeing this something went extra wrong.\n");
 	}
+	cPtr++;
+	
+	if(flag == 'v')
+		printf("\n");
+	
+	if(*cPtr != '\0') 
+		fuckItUp(*cPtr, cPtr, dPtr, Data, Code, flag); 
 }
 
 // Add characters to Code array
-void addCode(FILE *file, char *code, int *count) {
+void addCode(FILE *file, char *code) {
 	char c;
 
 	c = fgetc(file);
 	
 	while(c != bEOF) {
 		if(isValidCode(c)) {
-			code[*count] = c;
-			(*count)++;
+			*code = c;
+			code++;
 		}
 		
 		c = fgetc(file);
 	}
+
+	*code = '\0';
 }
 
 // Check if code char is a valid command
