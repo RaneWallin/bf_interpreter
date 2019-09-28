@@ -41,25 +41,25 @@ void 						fuckItUp(char code,
 									 int pause);
 					 
 // colors
-const char *BRIGHT_RED  	= "\033[31;1m";
-const char *DARK_CYAN    	= "\033[36m";
-const char *BRIGHT_CYAN  	= "\033[36;1m";
-const char *BRIGHT_WHITE 	= "\033[37;1m";
-const char *CLEAR_COLOR  	= "\033[0m";
+const char *BRIGHT_RED		= "\033[31;1m";
+const char *DARK_CYAN		= "\033[36m";
+const char *BRIGHT_CYAN		= "\033[36;1m";
+const char *BRIGHT_WHITE	= "\033[37;1m";
+const char *CLEAR_COLOR		= "\033[0m";
 
 
 // constants
-const int 	COMMANDS 		= 8;
-const char 	VALID_CODE[] 	= {';', ':', '<', '>', '[', ']', '+', '-'};
+const int 	COMMANDS		= 8;
+const char 	VALID_CODE[]	= {';', ':', '<', '>', '[', ']', '+', '-'};
 
 // Errors
-const char  *NO_FILE_MSG 	= "No such file exists!";
-const char  *USAGE 			= "Usage: brain <filename> [-v | -r]\n";
-const char 	*BAD_LOOP		= "Loop conditions out of bounds.\n";
+const char	*NO_FILE_MSG	= "No such file exists!";
+const char	*USAGE			= "Usage: brain <filename> [-v | -r]\n";
+const char	*BAD_LOOP		= "Loop conditions out of bounds.\n";
 const char	*BAD_POINTER	= "Pointer out of bounds.\n";
 const char	bEOF			= 255;
-const int 	NO_FILE_ERROR 	= -2;
-const int 	USAGE_ERROR		= -1;
+const int	NO_FILE_ERROR	= -2;
+const int	USAGE_ERROR		= -1;
 
 
 // File handling
