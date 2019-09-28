@@ -30,14 +30,15 @@
 #include <stdlib.h>
 
 // function prototypes
-int  		isValidCode(char code);
-void 		addCode(FILE *file, char *code);
-void 		fuckItUp(char code, 
-					 char *cPtr, 
-					 int *dPtr, 
-					 int *Data, 
-					 char *Code, 
-					 char flag);
+int  						isValidCode(char code);
+void 						addCode(FILE *file, char *code);
+void 						fuckItUp(char code, 
+									 char *cPtr, 
+									 int *dPtr, 
+									 int *Data, 
+									 char *Code, 
+									 int verbose,
+									 int pause);
 					 
 // colors
 const char *BRIGHT_RED  	= "\033[31;1m";
@@ -53,7 +54,7 @@ const char 	VALID_CODE[] 	= {';', ':', '<', '>', '[', ']', '+', '-'};
 
 // Errors
 const char  *NO_FILE_MSG 	= "No such file exists!";
-const char  *USAGE 			= "Usage: brain <filename>\n";
+const char  *USAGE 			= "Usage: brain <filename> [-v | -r]\n";
 const char 	*BAD_LOOP		= "Loop conditions out of bounds.\n";
 const char	*BAD_POINTER	= "Pointer out of bounds.\n";
 const char	bEOF			= 255;
@@ -62,7 +63,6 @@ const int 	USAGE_ERROR		= -1;
 
 
 // File handling
-const int 	FILENAME      	= 1;
 const char	*READONLY		= "r";
 
 int main(int argc, char **argv)
@@ -70,6 +70,10 @@ int main(int argc, char **argv)
 	int *Data,
 		*dPtr,
 		fsz,
+		repeat = 0,
+		filename = 1,
+		verbose = 0,
+		pause = 0,
 		i;
 		
 	char *Code,
@@ -82,10 +86,24 @@ int main(int argc, char **argv)
 		return USAGE_ERROR;
 	}
 	
+	if(argc > 2) {
+		for(i = 1; i < argc; i++) {
+			if(strcmp(argv[i], "-v") == 0) 
+				verbose = 1;
+			else if (strcmp(argv[i], "-r") == 0)
+				repeat = 1;
+			else if(strcmp(argv[i], "-p") == 0)
+				pause = 1;
+			else
+				filename = i;
+		}
+	}
+	
+	
 	// Verify and open file
-	if((fileBF = fopen(argv[FILENAME], READONLY)) == NULL) {
+	if((fileBF = fopen(argv[filename], READONLY)) == NULL) {
 		// File doesn't exist
-		printf("%s\n", NO_FILE_MSG);
+		printf("%s: %s\n", NO_FILE_MSG, argv[filename]);
 		return NO_FILE_ERROR;
 	}
 	
@@ -109,8 +127,13 @@ int main(int argc, char **argv)
 	cPtr = Code;
 	dPtr = Data;
 	
+	printf("Brainfuck interpreter by Rane Wallin\n");
 	
-	fuckItUp(*cPtr, cPtr, dPtr, Data, Code, 'v');
+	do {
+		printf("\nRunning...\n");;
+		fuckItUp(*cPtr, cPtr, dPtr, Data, Code, verbose, pause);
+		printf("\n");
+	} while(repeat);
 	
 	printf("\n");
 	
@@ -118,21 +141,24 @@ int main(int argc, char **argv)
 }
 
 // Perform current command `code`
-void fuckItUp(char code, char *cPtr, int *dPtr, int *Data, char *Code, char flag) {
+void fuckItUp(char code, char *cPtr, int *dPtr, int *Data, char *Code, int verbose, int pause) {
 	int i, j;
+	
+	// pause
+	if(pause)
+		for(i = 0; i < 10000; i++)
+			for(j = 0; j < 10000; j++);
 	
 	
 	// Print Code and Data info in verbose mode
-	if(flag == 'v') {
-		// pause
-		for(i = 0; i < 10000; i++)
-			for(j = 0; j < 10000; j++);
+	if(verbose) {
 			
 		printf("Data: ");
 		for(i = 0; i < 10; i++) {
 			printf("%s%d ", (&Data[i] == dPtr) ? 
 								BRIGHT_CYAN : CLEAR_COLOR,
-							  Data[i]);
+							  Data[i],
+							  CLEAR_COLOR);
 		}
 		
 		printf("\n");
@@ -150,7 +176,7 @@ void fuckItUp(char code, char *cPtr, int *dPtr, int *Data, char *Code, char flag
 			scanf("%d", &*dPtr);
 			break;
 		case ':':
-			printf("%s%d%s ", (flag == 'v' ? BRIGHT_RED : CLEAR_COLOR), 
+			printf("%s%d%s ", (verbose ? BRIGHT_RED : CLEAR_COLOR), 
 					          *dPtr, 
 					          CLEAR_COLOR);
 			break;
@@ -199,11 +225,11 @@ void fuckItUp(char code, char *cPtr, int *dPtr, int *Data, char *Code, char flag
 	}
 	cPtr++;
 	
-	if(flag == 'v')
+	if(verbose)
 		printf("\n");
 	
 	if(*cPtr != '\0') 
-		fuckItUp(*cPtr, cPtr, dPtr, Data, Code, flag); 
+		fuckItUp(*cPtr, cPtr, dPtr, Data, Code, verbose, pause); 
 }
 
 // Add characters to Code array
