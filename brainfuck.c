@@ -115,7 +115,7 @@ int main(int argc, char **argv)
 	fseek(fileBF, 0L, SEEK_END);
 	fsz = ftell(fileBF);
 	rewind(fileBF);
-	if(fsz < 30) fsz = 30;
+	if(fsz < 10) fsz = 10;
 	Code = (char *) calloc((fsz + 1), sizeof(char));
 
 	// Get each character from the file, validate it, and put it
@@ -165,7 +165,7 @@ void fuckItUp(char code, char *cPtr, int *dPtr, int *Data, char *Code, int verbo
 		
 		printf("\n");
 		printf("Code: ");
-		for(i = 0; i < 50; i++) {
+		for(i = 0; i < 10; i++) {
 			printf("%s%c%s ", &Code[i] == cPtr ? BRIGHT_CYAN : CLEAR_COLOR,
 						      Code[i], CLEAR_COLOR);
 		}
