@@ -115,7 +115,7 @@ int main(int argc, char **argv)
 	fseek(fileBF, 0L, SEEK_END);
 	fsz = ftell(fileBF);
 	rewind(fileBF);
-	if(fsz < 10) fsz = 10;
+	if(fsz < 30) fsz = 30;
 	Code = (char *) calloc((fsz + 1), sizeof(char));
 
 	// Get each character from the file, validate it, and put it
@@ -142,7 +142,9 @@ int main(int argc, char **argv)
 
 // Perform current command `code`
 void fuckItUp(char code, char *cPtr, int *dPtr, int *Data, char *Code, int verbose, int pause) {
-	int i, j;
+	int i, j,
+	    lb = 0,
+	    rb = 0;
 	
 	// pause
 	if(pause)
@@ -163,7 +165,7 @@ void fuckItUp(char code, char *cPtr, int *dPtr, int *Data, char *Code, int verbo
 		
 		printf("\n");
 		printf("Code: ");
-		for(i = 0; i < 10; i++) {
+		for(i = 0; i < 50; i++) {
 			printf("%s%c%s ", &Code[i] == cPtr ? BRIGHT_CYAN : CLEAR_COLOR,
 						      Code[i], CLEAR_COLOR);
 		}
@@ -191,25 +193,36 @@ void fuckItUp(char code, char *cPtr, int *dPtr, int *Data, char *Code, int verbo
 			dPtr++;
 			break;
 		case '[':
+			
 			if(*dPtr == 0) {
-				while(*cPtr != ']') {
+				rb++;
+				while(rb != 0) {
 					if (*cPtr == '\0') {
 						printf("[ %s", BAD_LOOP);
 						return;
 					}
 					cPtr++;
+					if(*cPtr == '[') rb++;
+					if(*cPtr == ']') rb--;
 				} 
 			}
 				
 			break;
 		case ']':
-			while(*cPtr != '[') {
+			lb++;
+			
+			while(lb != 0) {
 				if (cPtr < 0) {
 					printf("] %s", BAD_LOOP);
 					return;
 				}
-			
-				cPtr--;	
+				
+				cPtr--;
+				
+				if(*cPtr == ']') lb++;
+				
+				if(*cPtr == '[') lb--;	
+				//cPtr--;
 			} 
 			
 			cPtr--;
