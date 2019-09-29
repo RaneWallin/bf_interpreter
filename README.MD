@@ -10,7 +10,9 @@ The interpreter is written in C. To use it, download brainfuck.c and compile it.
 ### Optional Flags
 
 -v | Verbose mode prints out the first 10 elements in the Code and Data arrays
+
 -r | Repeat execution of code until user exists (control-C in Linux)
+
 -p | Pause between each command, only works in verbose mode
 
 
