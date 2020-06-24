@@ -1,7 +1,7 @@
 /*
- * brainfuck.c - Rane Wallin
+ * bf.c - Rane Wallin
  * 
- * A brainfuck interpreter that processes code written in brainfuck
+ * A brainf**k interpreter that processes code written in brainfuck
  * 
  * Copyright 2019  <SheCodes@pm.me>
  * 
@@ -127,11 +127,11 @@ int main(int argc, char **argv)
 	cPtr = Code;
 	dPtr = Data;
 	
-	printf("Brainfuck interpreter by Rane Wallin\n");
+	printf("Brainf**k interpreter by Rane Wallin\n");
 	
 	do {
 		printf("\nRunning...\n");;
-		fuckItUp(*cPtr, cPtr, dPtr, Data, Code, verbose, pause);
+		bfItUp(*cPtr, cPtr, dPtr, Data, Code, verbose, pause);
 		printf("\n");
 	} while(repeat);
 	
@@ -141,7 +141,7 @@ int main(int argc, char **argv)
 }
 
 // Perform current command `code`
-void fuckItUp(char code, char *cPtr, int *dPtr, int *Data, char *Code, int verbose, int pause) {
+void bfItUp(char code, char *cPtr, int *dPtr, int *Data, char *Code, int verbose, int pause) {
 	int i, j,
 	    lb = 0,
 	    rb = 0;
@@ -242,7 +242,7 @@ void fuckItUp(char code, char *cPtr, int *dPtr, int *Data, char *Code, int verbo
 		printf("\n");
 	
 	if(*cPtr != '\0') 
-		fuckItUp(*cPtr, cPtr, dPtr, Data, Code, verbose, pause); 
+		bfItUp(*cPtr, cPtr, dPtr, Data, Code, verbose, pause); 
 }
 
 // Add characters to Code array
