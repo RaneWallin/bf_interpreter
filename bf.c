@@ -1,7 +1,7 @@
 /*
  * bf.c - Rane Wallin
  * 
- * A brainf**k interpreter that processes code written in brainfuck
+ * A brainf**k interpreter that processes code written in brainf**k
  * 
  * Copyright 2019  <SheCodes@pm.me>
  * 
