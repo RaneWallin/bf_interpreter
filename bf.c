@@ -32,7 +32,7 @@
 // function prototypes
 int  						isValidCode(char code);
 void 						addCode(FILE *file, char *code);
-void 						fuckItUp(char code, 
+void 						bfItUp(char code, 
 									 char *cPtr, 
 									 int *dPtr, 
 									 int *Data, 
@@ -53,10 +53,10 @@ const int 	COMMANDS		= 8;
 const char 	VALID_CODE[]	= {';', ':', '<', '>', '[', ']', '+', '-'};
 
 // Errors
-const char	*NO_FILE_MSG	= "No such file exists!";
+const char	*NO_FILE_MSG	        = "No such file exists!";
 const char	*USAGE			= "Usage: brain <filename> [-v | -r]\n";
 const char	*BAD_LOOP		= "Loop conditions out of bounds.\n";
-const char	*BAD_POINTER	= "Pointer out of bounds.\n";
+const char	*BAD_POINTER	        = "Pointer out of bounds.\n";
 const char	bEOF			= 255;
 const int	NO_FILE_ERROR	= -2;
 const int	USAGE_ERROR		= -1;
@@ -158,7 +158,7 @@ void bfItUp(char code, char *cPtr, int *dPtr, int *Data, char *Code, int verbose
 		printf("Data: ");
 		for(i = 0; i < 10; i++) {
 			printf("%s%d ", (&Data[i] == dPtr) ? 
-								BRIGHT_CYAN : CLEAR_COLOR,
+						          BRIGHT_CYAN : CLEAR_COLOR,
 							  Data[i],
 							  CLEAR_COLOR);
 		}
